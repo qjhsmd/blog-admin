@@ -39,3 +39,19 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function listArtcle(params) {
+  return request({
+    url: '/api/list_artcle',
+    method: 'get',
+    params
+  })
+}
+
+export function create_artcle(data) {
+  return request({
+    url: '/api/create_artcle',
+    method: 'post',
+    data
+  })
+}

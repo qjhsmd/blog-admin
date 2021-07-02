@@ -9,7 +9,7 @@
 
       <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ new Date(scope.row.creat_time).getTime() | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
@@ -19,11 +19,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" label="Importance">
+      <!-- <el-table-column width="100px" label="Importance">
         <template slot-scope="scope">
           <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column class-name="status-col" label="Status" width="110">
         <template slot-scope="{row}">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchList,listArtcle } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -80,7 +80,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20
+        pageSize: 20
       }
     }
   },
@@ -90,8 +90,9 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
+      listArtcle(this.listQuery).then(response => {
+        console.log(response)
+        this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       })
