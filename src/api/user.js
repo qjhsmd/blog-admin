@@ -33,7 +33,8 @@ export function adminLogin(data) {
 }
 export function getUserInfo() {
   return request({
-    url: '/api/admin/userInfo',
+    // url: '/api/admin/userInfo',
+    url: '/api/user/findAll',
     method: 'get'
   })
 }

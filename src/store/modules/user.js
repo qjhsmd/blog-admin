@@ -35,6 +35,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       adminLogin({ user_name: username.trim(), pass_word: password }).then(response => {
         const { data } = response
+        console.log(response);
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
