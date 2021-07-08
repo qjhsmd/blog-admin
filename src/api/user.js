@@ -25,7 +25,8 @@ export function logout() {
 
 export function adminLogin(data) {
   return request({
-    url: '/api/admin/login',
+    // url: '/api/admin/login',
+    url: '/api/auth/login',
     method: 'post',
     data
   })
@@ -33,6 +34,12 @@ export function adminLogin(data) {
 export function getUserInfo() {
   return request({
     url: '/api/admin/userInfo',
+    method: 'get'
+  })
+}
+export function getfindAll() {
+  return request({
+    url: '/api/user/findAll',
     method: 'get'
   })
 }
