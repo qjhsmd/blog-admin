@@ -69,15 +69,6 @@
       >
         {{ $t("login.logIn") }}
       </el-button>
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width: 100%; margin-bottom: 30px"
-        @click.native.prevent="getfindAll"
-      >
-        测试
-      </el-button>
-
       <div style="position: relative">
         <div class="tips">
           <span>{{ $t("login.username") }} : admin</span>
@@ -114,7 +105,6 @@
 import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
-import {getfindAll} from '@/api/user'
 
 export default {
   name: 'Login',
@@ -177,9 +167,6 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    getfindAll() {
-      getfindAll()
-    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')

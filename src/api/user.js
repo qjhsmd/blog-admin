@@ -18,8 +18,9 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/api/admin/logout',
-    method: 'post'
+    // url: '/api/admin/logout',
+    url: '/api/auth/logout',
+    method: 'get'
   })
 }
 
@@ -33,8 +34,7 @@ export function adminLogin(data) {
 }
 export function getUserInfo() {
   return request({
-    // url: '/api/admin/userInfo',
-    url: '/api/user/findAll',
+    url: '/api/user/userInfo',
     method: 'get'
   })
 }
