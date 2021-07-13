@@ -15,7 +15,7 @@
 
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <!-- <Warning /> -->
 
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
@@ -28,15 +28,16 @@
               <el-row>
                 <el-col :span="8">
                   <el-form-item label-width="60px" label="Author:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
+                    <el-input v-model="postForm.author" />
+                    <!-- <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
+                    </el-select> -->
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="Publish Time:" class="postInfo-container-item">
-                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
+                    <el-date-picker v-model="publish_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
                   </el-form-item>
                 </el-col>
 
@@ -53,12 +54,21 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
+                    <el-select v-model="postForm.classify_id" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user" @change="changeHandler">
+                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item.classify_name" :value="item.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </el-col>
         </el-row>
 
         <el-form-item style="margin-bottom: 40px;" label-width="70px" label="Summary:">
-          <el-input v-model="postForm.content_short" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
+          <el-input v-model="postForm.artcle_describe" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
@@ -80,8 +90,8 @@ import Upload from '@/components/Upload/SingleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { fetchArticle } from '@/api/article'
-import { searchUser } from '@/api/remote-search'
+import { fetchArticle, saveArtcle, listClassify } from '@/api/article'
+// import { searchUser } from '@/api/remote-search'
 import Warning from './Warning'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 
@@ -89,10 +99,12 @@ const defaultForm = {
   status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  content_short: '', // 文章摘要
+  artcle_describe: '', // 文章摘要
+  classify_name: '',
+  classify_id: '',
   source_uri: '', // 文章外链
   image_uri: '', // 文章图片
-  display_time: undefined, // 前台展示时间
+  publish_time: undefined, // 前台展示时间
   id: undefined,
   platforms: ['a-platform'],
   comment_disabled: false,
@@ -140,7 +152,7 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
+        // image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
@@ -150,21 +162,21 @@ export default {
   },
   computed: {
     contentShortLength() {
-      return this.postForm.content_short.length
+      return this.postForm.artcle_describe.length
     },
     lang() {
       return this.$store.getters.language
     },
-    displayTime: {
+    publish_time: {
       // set and get is useful when the data
       // returned by the back end api is different from the front end
       // back end return => "2013-06-25 06:59:25"
       // front end need timestamp => 1372114765000
       get() {
-        return (+new Date(this.postForm.display_time))
+        return (+new Date(this.postForm.publish_time))
       },
       set(val) {
-        this.postForm.display_time = new Date(val)
+        this.postForm.publish_time = new Date(val)
       }
     }
   },
@@ -173,6 +185,7 @@ export default {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
     }
+    this.getRemoteUserList()
 
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
@@ -186,7 +199,7 @@ export default {
 
         // just for test
         this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.content_short += `   Article Id:${this.postForm.id}`
+        this.postForm.artcle_describe += `   Article Id:${this.postForm.id}`
 
         // set tagsview title
         this.setTagsViewTitle()
@@ -217,8 +230,11 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.postForm.status = 'published'
-          this.loading = false
+          saveArtcle(this.postForm).then(res => {
+            this.postForm.status = 'published'
+          }).finally(() => {
+            this.loading = false
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -242,9 +258,16 @@ export default {
       this.postForm.status = 'draft'
     },
     getRemoteUserList(query) {
-      searchUser(query).then(response => {
-        if (!response.data.items) return
-        this.userListOptions = response.data.items.map(v => v.name)
+      listClassify(query).then(response => {
+        if (!response.data) return
+        this.userListOptions = response.data
+      })
+    },
+    changeHandler() {
+      this.userListOptions.forEach((item) => {
+        if (item.id === this.postForm.classify_id) {
+          this.postForm.classify_name = item.classify_name
+        }
       })
     }
   }

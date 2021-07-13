@@ -42,16 +42,33 @@ export function updateArticle(data) {
 
 export function listArtcle(params) {
   return request({
-    url: '/api/list_artcle',
+    // url: '/api/list_artcle',
+    url: '/api/artcle/findAll',
     method: 'get',
     params
   })
 }
 
-export function create_artcle(data) {
+export function saveArtcle(data) {
   return request({
-    url: '/api/create_artcle',
+    url: '/api/artcle/saveArtcle',
     method: 'post',
     data
+  })
+}
+
+export function listClassify(params) {
+  return request({
+    url: '/api/classify/findAll',
+    method: 'get',
+    params
+  })
+}
+
+export function removeClassify(params) {
+  return request({
+    url: '/api/classify/removeClassify',
+    method: 'delete',
+    params
   })
 }
