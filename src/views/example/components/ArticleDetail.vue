@@ -5,7 +5,10 @@
         <CommentDropdown v-model="postForm.comment_disabled" />
         <PlatformDropdown v-model="postForm.platforms" />
         <SourceUrlDropdown v-model="postForm.source_uri" />
-        <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
+        <el-button v-if="isEdit" v-loading="loading" style="margin-left: 10px;" type="success" @click="updateArticle">
+          Update
+        </el-button>
+        <el-button v-else v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           Publish
         </el-button>
         <el-button v-loading="loading" type="warning" @click="draftForm">
@@ -90,9 +93,8 @@ import Upload from '@/components/Upload/SingleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { fetchArticle, saveArtcle, listClassify } from '@/api/article'
-// import { searchUser } from '@/api/remote-search'
-import Warning from './Warning'
+import { fetchArticle, saveArtcle, listClassify, updateArticle } from '@/api/article'
+// import Warning from './Warning'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 
 const defaultForm = {
@@ -113,7 +115,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky, Warning, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Upload, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown }, // Warning,
   props: {
     isEdit: {
       type: Boolean,
@@ -198,8 +200,8 @@ export default {
         this.postForm = response.data
 
         // just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.artcle_describe += `   Article Id:${this.postForm.id}`
+        // this.postForm.title += `   Article Id:${this.postForm.id}`
+        // this.postForm.artcle_describe += `   Article Id:${this.postForm.id}`
 
         // set tagsview title
         this.setTagsViewTitle()
@@ -220,7 +222,6 @@ export default {
       document.title = `${title} - ${this.postForm.id}`
     },
     submitForm() {
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -231,6 +232,27 @@ export default {
             duration: 2000
           })
           saveArtcle(this.postForm).then(res => {
+            this.postForm.status = 'published'
+          }).finally(() => {
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    updateArticle() {
+      this.$refs.postForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$notify({
+            title: '成功',
+            message: '修改文章成功',
+            type: 'success',
+            duration: 2000
+          })
+          updateArticle(this.postForm).then(res => {
             this.postForm.status = 'published'
           }).finally(() => {
             this.loading = false

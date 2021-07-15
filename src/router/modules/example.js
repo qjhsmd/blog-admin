@@ -11,6 +11,12 @@ const exampleRouter = {
   },
   children: [
     {
+      path: 'classify',
+      component: () => import('@/views/example/classify'),
+      name: 'Classify',
+      meta: { title: '文章分类', icon: 'list' }
+    },
+    {
       path: 'create',
       component: () => import('@/views/example/create'),
       name: 'CreateArticle',
@@ -28,12 +34,6 @@ const exampleRouter = {
       component: () => import('@/views/example/list'),
       name: 'ArticleList',
       meta: { title: 'articleList', icon: 'list' }
-    },
-    {
-      path: 'classify',
-      component: () => import('@/views/example/classify'),
-      name: 'Classify',
-      meta: { title: '文章分类', icon: 'list' }
     }
   ]
 }

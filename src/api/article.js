@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchArticle(id) {
   return request({
-    url: '/vue-element-admin/article/detail',
+    url: '/api/artcle/getArtcleDetail',
     method: 'get',
     params: { id }
   })
@@ -34,8 +34,8 @@ export function createArticle(data) {
 
 export function updateArticle(data) {
   return request({
-    url: '/vue-element-admin/article/update',
-    method: 'post',
+    url: '/api/artcle/updateArtcle',
+    method: 'put',
     data
   })
 }
@@ -59,7 +59,7 @@ export function saveArtcle(data) {
 
 export function listClassify(params) {
   return request({
-    url: '/api/classify/findAll',
+    url: '/api/artcle/classify/findAll',
     method: 'get',
     params
   })
@@ -67,7 +67,23 @@ export function listClassify(params) {
 
 export function removeClassify(params) {
   return request({
-    url: '/api/classify/removeClassify',
+    url: '/api/artcle/classify/removeClassify',
+    method: 'delete',
+    params
+  })
+}
+
+export function postClassify(data) {
+  return request({
+    url: '/api/artcle/classify/postClassify',
+    method: 'post',
+    data
+  })
+}
+
+export function removeArtcle(params) {
+  return request({
+    url: '/api/artcle/remove',
     method: 'delete',
     params
   })

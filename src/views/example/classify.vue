@@ -1,29 +1,49 @@
 <template>
   <div class="app-container">
+    <el-row>
+      <el-button type="primary" size="small" @click="dialogVisible = true">新增</el-button>
+    </el-row>
+    <br>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 70%">
       <el-table-column align="center" label="分类名称" prop="classify_name" />
       <el-table-column label="分类id" prop="id" width="100" />
       <el-table-column label="父类id" prop="pid" width="130" />
-      <el-table-column align="center" label="Actions" width="130">
+      <el-table-column align="center" label="操作" width="130">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" icon="el-icon-delete" @click="removeClassify(scope.row.id)">
-            Delete
-          </el-button>
+          <el-button type="primary" size="small" icon="el-icon-delete" @click="removeClassify(scope.row.id)" />
         </template>
       </el-table-column>
     </el-table>
-
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="分类名称">
+          <el-input v-model="form.classify_name" />
+        </el-form-item>
+        <el-form-item label="父类id">
+          <el-input v-model="form.pid" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="postClassify ">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
   </div>
 </template>
 
 <script>
-import { listClassify, removeClassify } from '@/api/article'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { listClassify, removeClassify, postClassify } from '@/api/article'
+// import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
   name: 'ArticleList',
-  components: { Pagination },
+  // components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -36,12 +56,17 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         pageSize: 20
+      },
+      form: {
+        classify_name: '',
+        pid: ''
       }
     }
   },
@@ -49,13 +74,25 @@ export default {
     this.getList()
   },
   methods: {
+    handleClose() {
+      this.dialogVisible = false
+    },
     getList() {
       this.listLoading = true
       listClassify(this.listQuery).then(response => {
         console.log(response)
-        this.list = response.data // .list
-        // this.total = response.data.total
+        this.list = response.data
         this.listLoading = false
+      })
+    },
+    postClassify() {
+      this.listLoading = true
+      postClassify(this.form).then(response => {
+        console.log(response)
+        this.getList()
+      }).finally(() => {
+        this.listLoading = false
+        this.dialogVisible = false
       })
     },
     removeClassify(id) {

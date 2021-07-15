@@ -130,6 +130,8 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  sysRouter,
+  exampleRouter,
   {
     path: '/permission',
     component: Layout,
@@ -186,13 +188,10 @@ export const asyncRoutes = [
   },
 
   /** when your routing map is too long, you can split it into small modules **/
-  sysRouter,
   componentsRouter,
   chartsRouter,
   nestedRouter,
   tableRouter,
-  exampleRouter,
-
   {
     path: '/tab',
     component: Layout,
