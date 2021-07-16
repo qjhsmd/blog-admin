@@ -20,17 +20,17 @@
       width="30%"
       :before-close="handleClose"
     >
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="分类名称">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="分类名称" prop="classify_name">
           <el-input v-model="form.classify_name" />
         </el-form-item>
-        <el-form-item label="父类id">
+        <el-form-item label="父类id" prop="pid">
           <el-input v-model="form.pid" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="postClassify ">确 定</el-button>
+        <el-button type="primary" @click="postClassify('form') ">确 定</el-button>
       </span>
     </el-dialog>
     <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
@@ -67,6 +67,14 @@ export default {
       form: {
         classify_name: '',
         pid: ''
+      },
+      rules: {
+        classify_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
+        ],
+        pid: [
+          { required: true, message: '请输入pid', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -85,14 +93,22 @@ export default {
         this.listLoading = false
       })
     },
-    postClassify() {
-      this.listLoading = true
-      postClassify(this.form).then(response => {
-        console.log(response)
-        this.getList()
-      }).finally(() => {
-        this.listLoading = false
-        this.dialogVisible = false
+    postClassify(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.listLoading = true
+          postClassify(this.form).then(response => {
+            console.log(response)
+            this.$refs[formName].resetFields()
+            this.getList()
+          }).finally(() => {
+            this.listLoading = false
+            this.dialogVisible = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     removeClassify(id) {

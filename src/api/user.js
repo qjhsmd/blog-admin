@@ -44,10 +44,3 @@ export function getfindAll() {
     method: 'get'
   })
 }
-export function saveUser(data) {
-  return request({
-    url: '/api/user/saveUser',
-    method: 'post',
-    data
-  })
-}
