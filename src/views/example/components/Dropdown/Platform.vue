@@ -26,16 +26,19 @@ export default {
   data() {
     return {
       platformsOptions: [
-        { key: 'a-platform', name: 'a-platform' },
-        { key: 'b-platform', name: 'b-platform' },
-        { key: 'c-platform', name: 'c-platform' }
+        { key: 'my-blog', name: 'my-blog' },
+        { key: 'csdn', name: 'CSDN' }
       ]
     }
   },
   computed: {
     platforms: {
       get() {
-        return this.value
+        if (this.value.length > 0) {
+          return JSON.parse(JSON.stringify(this.value))
+        } else {
+          return []
+        }
       },
       set(val) {
         this.$emit('input', val)

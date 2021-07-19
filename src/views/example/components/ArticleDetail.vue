@@ -3,7 +3,7 @@
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <CommentDropdown v-model="postForm.comment_disabled" />
-        <PlatformDropdown v-model="postForm.platforms" />
+        <PlatformDropdown v-model="postForm.platformsArray" />
         <SourceUrlDropdown v-model="postForm.source_uri" />
         <el-button v-if="isEdit" v-loading="loading" style="margin-left: 10px;" type="success" @click="updateArticle">
           Update
@@ -108,7 +108,8 @@ const defaultForm = {
   image_uri: '', // 文章图片
   publish_time: undefined, // 前台展示时间
   id: undefined,
-  platforms: ['a-platform'],
+  platforms: '',
+  platformsArray: [],
   comment_disabled: false,
   importance: 0
 }
@@ -198,6 +199,7 @@ export default {
     fetchData(id) {
       fetchArticle(id).then(response => {
         this.postForm = response.data
+        this.postForm.platformsArray = this.postForm.platforms.split(',')
 
         // just for test
         // this.postForm.title += `   Article Id:${this.postForm.id}`
@@ -224,6 +226,7 @@ export default {
     submitForm() {
       this.$refs.postForm.validate(valid => {
         if (valid) {
+          this.postForm.platforms = this.postForm.platformsArray.join(',')
           this.loading = true
           this.$notify({
             title: '成功',
@@ -245,6 +248,7 @@ export default {
     updateArticle() {
       this.$refs.postForm.validate(valid => {
         if (valid) {
+          this.postForm.platforms = this.postForm.platformsArray.join(',')
           this.loading = true
           this.$notify({
             title: '成功',

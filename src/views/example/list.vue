@@ -19,11 +19,20 @@
           <span>{{ new Date(scope.row.update_time) | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column align="center" label="操作" width="250">
+      <el-table-column width="120" align="center" label="状态">
+        <template slot-scope="{row}">
+          <span v-if="row.artcle_status ==10">未发布</span>
+          <span v-if="row.artcle_status ==20">已发布</span>
+          <span v-if="row.artcle_status ==30">已关闭</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <el-button type="primary" size="small" icon="el-icon-edit" @click="$router.push('/example/edit/'+scope.row.id)" />
           <el-button type="primary" size="small" icon="el-icon-delete" @click="removeArtcle(scope.row.id)" />
+          <el-button v-if="scope.row.artcle_status !=20" type="primary" size="small" @click="issue(scope.row.id)"> 发布</el-button>
+          <el-button v-if="scope.row.artcle_status ==20" type="primary" size="small" @click="unissueArtcle(scope.row.id)"> 取消</el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -33,7 +42,7 @@
 </template>
 
 <script>
-import { listArtcle, removeArtcle } from '@/api/article'
+import { listArtcle, removeArtcle, issueArtcle, unissueArtcle } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -64,6 +73,44 @@ export default {
     this.getList()
   },
   methods: {
+    unissueArtcle(id) {
+      this.$confirm('此操作将取消发布该文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.listLoading = true
+        unissueArtcle({ id: id }).then(response => {
+          console.log(response)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '取消成功!'
+          })
+        })
+      }).finally(() => {
+        this.listLoading = false
+      })
+    },
+    issue(id) {
+      this.$confirm('此操作将发布该文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.listLoading = true
+        issueArtcle({ id: id }).then(response => {
+          console.log(response)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '发布成功!'
+          })
+        })
+      }).finally(() => {
+        this.listLoading = false
+      })
+    },
     getList() {
       this.listLoading = true
       listArtcle(this.listQuery).then(response => {

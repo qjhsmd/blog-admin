@@ -88,3 +88,18 @@ export function removeArtcle(params) {
     params
   })
 }
+export function issueArtcle(params) {
+  return request({
+    url: '/api/artcle/blogIssue',
+    method: 'get',
+    params
+  })
+}
+
+export function unissueArtcle(params) {
+  return request({
+    url: '/api/artcle/blogUnissue',
+    method: 'get',
+    params
+  })
+}

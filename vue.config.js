@@ -37,13 +37,18 @@ module.exports = {
         target: 'http://10.31.52.38:3000',
         ws: true,
         changeOrigin: true
+      },
+      '/public': {
+        target: 'http://10.31.52.38:3000',
+        ws: true,
+        changeOrigin: true
       }
 
     },
     overlay: {
       warnings: false,
       errors: true
-    },
+    }
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
