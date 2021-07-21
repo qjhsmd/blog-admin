@@ -22,4 +22,11 @@ export function saveUser(data) {
     data
   })
 }
+export function visitsList(query) {
+  return request({
+    url: '/api/visits/findAll',
+    method: 'get',
+    params: query
+  })
+}
 

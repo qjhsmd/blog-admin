@@ -17,6 +17,12 @@ const sysRouter = {
       component: () => import('@/views/sys/user/list'),
       name: 'UserMage',
       meta: { title: '用户管理' }
+    },
+    {
+      path: 'visits-list',
+      component: () => import('@/views/sys/visitsList'),
+      name: 'UserMage',
+      meta: { title: '访问列表' }
     }
   ]
 }
