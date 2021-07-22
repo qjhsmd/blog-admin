@@ -12,52 +12,27 @@
       </el-table-column>
       <!-- <el-table-column align="center" width="150" label="用户名" prop="user_name" /> -->
       <el-table-column label="城市" width="120" prop="city" />
-      <!-- <el-table-column label="浏览器" prop="userAgent" /> -->
-      <el-table-column label="来源"  prop="entrance" />
-      <el-table-column label="终端"  prop="terminal" />
-      <el-table-column label="浏览器"  prop="explorer" />
-      <el-table-column align="center" label="创建时间" >
+      <el-table-column label="IP" prop="host" />
+      <el-table-column label="来源" prop="entrance" />
+      <el-table-column label="终端" prop="terminal" />
+      <el-table-column label="浏览器" prop="explorer" />
+      <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
           <span>{{ new Date(scope.row.create_time) | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" >
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" icon="el-icon-delete" @click="userRemove(scope.row.id)" />
+          <el-button type="primary" size="small" icon="el-icon-delete" @click="visitsRemove(scope.row.id)" />
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="user_name">
-          <el-input v-model="form.user_name" clearable />
-        </el-form-item>
-        <el-form-item label="角色" prop="roles">
-          <!-- <el-input v-model="form.roles" /> -->
-          <el-select v-model="form.roles" clearable style="width:100%">
-            <el-option v-for="(item,index) in rolesArry" :key="index" :value="item" :label="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass_word">
-          <el-input v-model="form.pass_word" type="password" clearable />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="postClassify('form') ">确 定</el-button>
-      </span>
-    </el-dialog>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
   </div>
 </template>
 
 <script>
-import { visitsList, userRemove, saveUser } from '@/api/sys'
+import { visitsList, visitsRemove, saveUser } from '@/api/sys'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -139,14 +114,14 @@ export default {
         this.listLoading = false
       })
     },
-    userRemove(id) {
-      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+    visitsRemove(id) {
+      this.$confirm('此操作将永久删除该访问信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.listLoading = true
-        userRemove({ id: id }).then(response => {
+        visitsRemove({ id: id }).then(response => {
           this.getList()
           this.listLoading = false
           this.$message({

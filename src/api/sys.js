@@ -30,3 +30,11 @@ export function visitsList(query) {
   })
 }
 
+export function visitsRemove(query) {
+  return request({
+    url: '/api/visits/remove',
+    method: 'delete',
+    params: query
+  })
+}
+
