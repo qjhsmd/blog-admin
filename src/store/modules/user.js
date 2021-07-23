@@ -7,6 +7,8 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
+  id: '',
+  email: '',
   roles: []
 }
 
@@ -25,6 +27,12 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_ID: (state, id) => {
+    state.id = id
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
   }
 }
 
@@ -35,7 +43,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       adminLogin({ user_name: username.trim(), pass_word: password }).then(response => {
         const { data } = response
-        console.log(response);
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
@@ -54,7 +61,7 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, user_name, image, introduction } = data
+        const { roles, user_name, image, introduction, id, email } = data
 
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
@@ -65,6 +72,9 @@ const actions = {
         commit('SET_NAME', user_name)
         commit('SET_AVATAR', image)
         commit('SET_INTRODUCTION', introduction)
+        commit('SET_ID', id)
+        commit('SET_EMAIL', email)
+
         resolve(data)
       }).catch(error => {
         reject(error)

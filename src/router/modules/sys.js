@@ -8,8 +8,8 @@ const sysRouter = {
   redirect: '/table/complex-table',
   name: 'Sys',
   meta: {
-    title: 'Sys',
-    icon: 'table'
+    title: '系统管理',
+    icon: 'el-icon-setting'
   },
   children: [
     {

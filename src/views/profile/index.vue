@@ -40,7 +40,9 @@ export default {
   components: { UserCard, Activity, Timeline, Account },
   data() {
     return {
-      user: {},
+      user: {
+        image: ''
+      },
       activeTab: 'activity'
     }
   },
@@ -48,7 +50,9 @@ export default {
     ...mapGetters([
       'name',
       'avatar',
-      'roles'
+      'roles',
+      'id',
+      'email'
     ])
   },
   created() {
@@ -59,8 +63,10 @@ export default {
       this.user = {
         name: this.name,
         role: this.roles.join(' | '),
-        email: 'admin@test.com',
-        avatar: this.avatar
+        email: this.email,
+        image: this.avatar,
+        avatar: this.avatar,
+        id: this.id
       }
     }
   }
