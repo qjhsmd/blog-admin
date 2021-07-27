@@ -16,7 +16,7 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="更新时间">
         <template slot-scope="scope">
-          <span>{{ new Date(scope.row.update_time) | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>{{ new Date(scope.row.modify_time?scope.row.modify_time:scope.row.create_time) | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120" align="center" label="状态">
